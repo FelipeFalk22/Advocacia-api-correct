@@ -1,0 +1,36 @@
+{
+  "name": "api-advocacia",
+  "version": "1.0.0",
+  "description": "api de advocacia",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "npx nodemon"
+  },
+  "keywords": [
+    "api",
+    "rest"
+  ],
+  "author": "fabiosperotto",
+  "license": "ISC",
+  "dependencies": {
+    "ajv": "^8.17.1",
+    "ajv-errors": "^3.0.0",
+    "ajv-formats": "^3.0.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.1",
+    "mysql2": "^3.15.3",
+    "node": "^24.11.0",
+    "sequelize": "^6.37.7",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  },
+  "engines": {
+    "node": ">=17"
+  }
+}
