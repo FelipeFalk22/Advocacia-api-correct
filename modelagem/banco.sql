@@ -1,61 +1,81 @@
+-- -----------------------------------------------------
+-- Banco de Dados: advocacia
+-- -----------------------------------------------------
+
 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
-SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+CREATE SCHEMA IF NOT EXISTS `advocacia` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE `advocacia`;
 
 -- -----------------------------------------------------
--- Schema advocacia
+-- Tabela: usuario
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `advocacia` ;
-USE `advocacia` ;
+DROP TABLE IF EXISTS `usuario`;
 
--- -----------------------------------------------------
--- Table `advocacia`.`advogado`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `advocacia`.`advogado` ;
-
-CREATE TABLE IF NOT EXISTS `advocacia`.`advogado` (
+CREATE TABLE `usuario` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `nome` VARCHAR(200) NOT NULL,
-  `oab` VARCHAR(50) NOT NULL,
-  `especialidade` VARCHAR(100) NOT NULL,
+  `email` VARCHAR(80) NOT NULL UNIQUE,
+  `senha` VARCHAR(64) NOT NULL,
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE = InnoDB;
-
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- -----------------------------------------------------
--- Table `advocacia`.`processo`
+-- Tabela: advogado
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `advocacia`.`processo` ;
+DROP TABLE IF EXISTS `advogado`;
 
-CREATE TABLE IF NOT EXISTS `advocacia`.`processo` (
+CREATE TABLE `advogado` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `nome` VARCHAR(200) NOT NULL,
+  `oab` VARCHAR(30) NOT NULL UNIQUE,
+  `especialidade` VARCHAR(100) NOT NULL,
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- -----------------------------------------------------
+-- Tabela: processo
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `processo`;
+
+CREATE TABLE `processo` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `id_advogado` INT NOT NULL,
-  `numero` VARCHAR(50) NOT NULL,
-  `descricao` VARCHAR(255) NULL,
-  `status` VARCHAR(50) NULL,
+  `numero_processo` VARCHAR(100) NOT NULL UNIQUE,
+  `descricao` TEXT NULL,
+  `status` VARCHAR(50) NULL DEFAULT 'em andamento',
+  `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   INDEX `fk_processo_advogado_idx` (`id_advogado` ASC),
   CONSTRAINT `fk_processo_advogado`
     FOREIGN KEY (`id_advogado`)
-    REFERENCES `advocacia`.`advogado` (`id`)
+    REFERENCES `advogado` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE
-) ENGINE = InnoDB;
-
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- -----------------------------------------------------
 -- Dados iniciais (opcional)
 -- -----------------------------------------------------
 START TRANSACTION;
-USE `advocacia`;
 
-INSERT INTO `advocacia`.`advogado` (`id`, `nome`, `oab`, `especialidade`)
-VALUES (DEFAULT, 'Dr. Felipe Almeida', '12345-DF', 'Trabalhista');
+INSERT INTO `usuario` (`nome`, `email`, `senha`)
+VALUES ('Felipe', 'felipe123@gmail.com', 'teste123');
 
-INSERT INTO `advocacia`.`processo` (`id`, `id_advogado`, `numero`, `descricao`, `status`)
-VALUES 
-(DEFAULT, 1, 'PROC-2025-001', 'Ação trabalhista contra Empresa X', 'Em andamento'),
-(DEFAULT, 1, 'PROC-2025-002', 'Recurso de indenização', 'Concluído');
+INSERT INTO `advogado` (`nome`, `oab`, `especialidade`)
+VALUES ('Edinilson', '111222', 'Trabalhista');
+
+INSERT INTO `processo` (`id_advogado`, `numero_processo`, `descricao`, `status`)
+VALUES
+  (1, 'PROC-001', 'Reclamação trabalhista contra empresa XPTO', 'em andamento'),
+  (1, 'PROC-002', 'Ação de horas extras', 'arquivado');
 
 COMMIT;
 
